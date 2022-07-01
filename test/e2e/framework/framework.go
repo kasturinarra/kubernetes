@@ -34,7 +34,7 @@ import (
 	"k8s.io/apimachinery/pkg/runtime"
 
 	v1 "k8s.io/api/core/v1"
-	apierrors "k8s.io/apimachinery/pkg/api/errors"
+	// apierrors "k8s.io/apimachinery/pkg/api/errors"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/labels"
 	"k8s.io/apimachinery/pkg/runtime/schema"
@@ -387,33 +387,33 @@ func (f *Framework) AfterEach() {
 	// DeleteNamespace at the very end in defer, to avoid any
 	// expectation failures preventing deleting the namespace.
 	defer func() {
-		nsDeletionErrors := map[string]error{}
+		//nsDeletionErrors := map[string]error{}
 		// Whether to delete namespace is determined by 3 factors: delete-namespace flag, delete-namespace-on-failure flag and the test result
 		// if delete-namespace set to false, namespace will always be preserved.
 		// if delete-namespace is true and delete-namespace-on-failure is false, namespace will be preserved if test failed.
-		if TestContext.DeleteNamespace && (TestContext.DeleteNamespaceOnFailure || !ginkgo.CurrentGinkgoTestDescription().Failed) {
-			for _, ns := range f.namespacesToDelete {
-				ginkgo.By(fmt.Sprintf("Destroying namespace %q for this suite.", ns.Name))
-				if err := f.ClientSet.CoreV1().Namespaces().Delete(context.TODO(), ns.Name, metav1.DeleteOptions{}); err != nil {
-					if !apierrors.IsNotFound(err) {
-						nsDeletionErrors[ns.Name] = err
+		//if TestContext.DeleteNamespace && (TestContext.DeleteNamespaceOnFailure || !ginkgo.CurrentGinkgoTestDescription().Failed) {
+		//	for _, ns := range f.namespacesToDelete {
+		//		ginkgo.By(fmt.Sprintf("Destroying namespace %q for this suite.", ns.Name))
+		//		if err := f.ClientSet.CoreV1().Namespaces().Delete(context.TODO(), ns.Name, metav1.DeleteOptions{}); err != nil {
+		//			if !apierrors.IsNotFound(err) {
+		//				nsDeletionErrors[ns.Name] = err
 
-						// Dump namespace if we are unable to delete the namespace and the dump was not already performed.
-						if !ginkgo.CurrentGinkgoTestDescription().Failed && TestContext.DumpLogsOnFailure {
-							DumpAllNamespaceInfo(f.ClientSet, ns.Name)
-						}
-					} else {
-						Logf("Namespace %v was already deleted", ns.Name)
-					}
-				}
-			}
-		} else {
-			if !TestContext.DeleteNamespace {
-				Logf("Found DeleteNamespace=false, skipping namespace deletion!")
-			} else {
-				Logf("Found DeleteNamespaceOnFailure=false and current test failed, skipping namespace deletion!")
-			}
-		}
+		//				// Dump namespace if we are unable to delete the namespace and the dump was not already performed.
+		//				if !ginkgo.CurrentGinkgoTestDescription().Failed && TestContext.DumpLogsOnFailure {
+		//					DumpAllNamespaceInfo(f.ClientSet, ns.Name)
+		//				}
+		//			} else {
+		//				Logf("Namespace %v was already deleted", ns.Name)
+		//			}
+		//		}
+		//	}
+		//} else {
+		//	if !TestContext.DeleteNamespace {
+		//		Logf("Found DeleteNamespace=false, skipping namespace deletion!")
+		//	} else {
+		//		Logf("Found DeleteNamespaceOnFailure=false and current test failed, skipping namespace deletion!")
+		//	}
+		//}
 
 		// Paranoia-- prevent reuse!
 		f.Namespace = nil
@@ -422,13 +422,13 @@ func (f *Framework) AfterEach() {
 		f.namespacesToDelete = nil
 
 		// if we had errors deleting, report them now.
-		if len(nsDeletionErrors) != 0 {
-			messages := []string{}
-			for namespaceKey, namespaceErr := range nsDeletionErrors {
-				messages = append(messages, fmt.Sprintf("Couldn't delete ns: %q: %s (%#v)", namespaceKey, namespaceErr, namespaceErr))
-			}
-			Failf(strings.Join(messages, ","))
-		}
+		//if len(nsDeletionErrors) != 0 {
+		//	messages := []string{}
+		//	for namespaceKey, namespaceErr := range nsDeletionErrors {
+		//		messages = append(messages, fmt.Sprintf("Couldn't delete ns: %q: %s (%#v)", namespaceKey, namespaceErr, namespaceErr))
+		//	}
+		//	Failf(strings.Join(messages, ","))
+		//}
 	}()
 
 	// run all aftereach functions in random order to ensure no dependencies grow
@@ -480,9 +480,9 @@ func (f *Framework) AfterEach() {
 	// Check whether all nodes are ready after the test.
 	// This is explicitly done at the very end of the test, to avoid
 	// e.g. not removing namespace in case of this failure.
-	if err := AllNodesReady(f.ClientSet, 7*time.Minute); err != nil {
-		Failf("All nodes should be ready after test, %v", err)
-	}
+	//if err := AllNodesReady(f.ClientSet, 7*time.Minute); err != nil {
+	//	Failf("All nodes should be ready after test, %v", err)
+	//}
 }
 
 // DeleteNamespace can be used to delete a namespace. Additionally it can be used to

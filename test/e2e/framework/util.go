@@ -28,7 +28,7 @@ import (
 	"os"
 	"os/exec"
 	"path"
-	"sort"
+	//"sort"
 	"strconv"
 	"strings"
 	"sync"
@@ -903,18 +903,18 @@ type EventsLister func(opts metav1.ListOptions, ns string) (*v1.EventList, error
 // dumpEventsInNamespace dumps events in the given namespace.
 func dumpEventsInNamespace(eventsLister EventsLister, namespace string) {
 	ginkgo.By(fmt.Sprintf("Collecting events from namespace %q.", namespace))
-	events, err := eventsLister(metav1.ListOptions{}, namespace)
-	ExpectNoError(err, "failed to list events in namespace %q", namespace)
+	//events, err := eventsLister(metav1.ListOptions{}, namespace)
+	//ExpectNoError(err, "failed to list events in namespace %q", namespace)
 
-	ginkgo.By(fmt.Sprintf("Found %d events.", len(events.Items)))
+	//ginkgo.By(fmt.Sprintf("Found %d events.", len(events.Items)))
 	// Sort events by their first timestamp
-	sortedEvents := events.Items
-	if len(sortedEvents) > 1 {
-		sort.Sort(byFirstTimestamp(sortedEvents))
-	}
-	for _, e := range sortedEvents {
-		Logf("At %v - event for %v: %v %v: %v", e.FirstTimestamp, e.InvolvedObject.Name, e.Source, e.Reason, e.Message)
-	}
+	//sortedEvents := events.Items
+	//if len(sortedEvents) > 1 {
+	//	sort.Sort(byFirstTimestamp(sortedEvents))
+	//}
+	//for _, e := range sortedEvents {
+	//	Logf("At %v - event for %v: %v %v: %v", e.FirstTimestamp, e.InvolvedObject.Name, e.Source, e.Reason, e.Message)
+	//}
 	// Note that we don't wait for any Cleanup to propagate, which means
 	// that if you delete a bunch of pods right before ending your test,
 	// you may or may not see the killing/deletion/Cleanup events.
