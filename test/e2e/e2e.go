@@ -39,12 +39,12 @@ import (
 	commontest "k8s.io/kubernetes/test/e2e/common"
 	"k8s.io/kubernetes/test/e2e/framework"
 	e2elog "k8s.io/kubernetes/test/e2e/framework/log"
-	e2enode "k8s.io/kubernetes/test/e2e/framework/node"
+	//e2enode "k8s.io/kubernetes/test/e2e/framework/node"
 	e2epod "k8s.io/kubernetes/test/e2e/framework/pod"
 	"k8s.io/kubernetes/test/e2e/manifest"
 	e2ereporters "k8s.io/kubernetes/test/e2e/reporters"
 	testutils "k8s.io/kubernetes/test/utils"
-	utilnet "k8s.io/utils/net"
+	//utilnet "k8s.io/utils/net"
 
 	clientset "k8s.io/client-go/kubernetes"
 	// ensure auth plugins are loaded
@@ -150,14 +150,14 @@ func runKubernetesServiceTestContainer(c clientset.Interface, ns string) {
 // but we can detect if a cluster is dual stack because pods have two addresses (one per family)
 func getDefaultClusterIPFamily(c clientset.Interface) string {
 	// Get the ClusterIP of the kubernetes service created in the default namespace
-	svc, err := c.CoreV1().Services(metav1.NamespaceDefault).Get("kubernetes", metav1.GetOptions{})
-	if err != nil {
-		framework.Failf("Failed to get kubernetes service ClusterIP: %v", err)
-	}
+	//svc, err := c.CoreV1().Services(metav1.NamespaceDefault).Get("kubernetes", metav1.GetOptions{})
+	//if err != nil {
+	//	framework.Failf("Failed to get kubernetes service ClusterIP: %v", err)
+	//}
 
-	if utilnet.IsIPv6String(svc.Spec.ClusterIP) {
-		return "ipv6"
-	}
+	//if utilnet.IsIPv6String(svc.Spec.ClusterIP) {
+	//	return "ipv6"
+	//}
 	return "ipv4"
 }
 
@@ -239,34 +239,34 @@ func setupSuite() {
 	// In large clusters we may get to this point but still have a bunch
 	// of nodes without Routes created. Since this would make a node
 	// unschedulable, we need to wait until all of them are schedulable.
-	framework.ExpectNoError(framework.WaitForAllNodesSchedulable(c, framework.TestContext.NodeSchedulableTimeout))
+	//framework.ExpectNoError(framework.WaitForAllNodesSchedulable(c, framework.TestContext.NodeSchedulableTimeout))
 
 	// If NumNodes is not specified then auto-detect how many are scheduleable and not tainted
-	if framework.TestContext.CloudConfig.NumNodes == framework.DefaultNumNodes {
-		nodes, err := e2enode.GetReadySchedulableNodes(c)
-		framework.ExpectNoError(err)
-		framework.TestContext.CloudConfig.NumNodes = len(nodes.Items)
-	}
+	//if framework.TestContext.CloudConfig.NumNodes == framework.DefaultNumNodes {
+	//	nodes, err := e2enode.GetReadySchedulableNodes(c)
+	//	framework.ExpectNoError(err)
+	//	framework.TestContext.CloudConfig.NumNodes = len(nodes.Items)
+	//}
 
 	// Ensure all pods are running and ready before starting tests (otherwise,
 	// cluster infrastructure pods that are being pulled or started can block
 	// test pods from running, and tests that ensure all pods are running and
 	// ready will fail).
-	podStartupTimeout := framework.TestContext.SystemPodsStartupTimeout
+	//podStartupTimeout := framework.TestContext.SystemPodsStartupTimeout
 	// TODO: In large clusters, we often observe a non-starting pods due to
 	// #41007. To avoid those pods preventing the whole test runs (and just
 	// wasting the whole run), we allow for some not-ready pods (with the
 	// number equal to the number of allowed not-ready nodes).
-	if err := e2epod.WaitForPodsRunningReady(c, metav1.NamespaceSystem, int32(framework.TestContext.MinStartupPods), int32(framework.TestContext.AllowedNotReadyNodes), podStartupTimeout, map[string]string{}); err != nil {
-		framework.DumpAllNamespaceInfo(c, metav1.NamespaceSystem)
-		framework.LogFailedContainers(c, metav1.NamespaceSystem, framework.Logf)
-		runKubernetesServiceTestContainer(c, metav1.NamespaceDefault)
-		framework.Failf("Error waiting for all pods to be running and ready: %v", err)
-	}
+	//if err := e2epod.WaitForPodsRunningReady(c, metav1.NamespaceSystem, int32(framework.TestContext.MinStartupPods), int32(framework.TestContext.AllowedNotReadyNodes), podStartupTimeout, map[string]string{}); err != nil {
+	//	framework.DumpAllNamespaceInfo(c, metav1.NamespaceSystem)
+	//	framework.LogFailedContainers(c, metav1.NamespaceSystem, framework.Logf)
+	//	runKubernetesServiceTestContainer(c, metav1.NamespaceDefault)
+	//	framework.Failf("Error waiting for all pods to be running and ready: %v", err)
+	//}
 
-	if err := waitForDaemonSets(c, metav1.NamespaceSystem, int32(framework.TestContext.AllowedNotReadyNodes), framework.TestContext.SystemDaemonsetStartupTimeout); err != nil {
-		framework.Logf("WARNING: Waiting for all daemonsets to be ready failed: %v", err)
-	}
+	//if err := waitForDaemonSets(c, metav1.NamespaceSystem, int32(framework.TestContext.AllowedNotReadyNodes), framework.TestContext.SystemDaemonsetStartupTimeout); err != nil {
+	//	framework.Logf("WARNING: Waiting for all daemonsets to be ready failed: %v", err)
+	//}
 
 	// Log the version of the server and this client.
 	framework.Logf("e2e test version: %s", version.Get().GitVersion)
